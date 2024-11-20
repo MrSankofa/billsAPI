@@ -29,10 +29,15 @@ jobs:
       - name: Cache Maven Dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.m2
+          path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven
+            # Exclude cache files that are not directly related to dependencies
+          options: |
+            --exclude="**/resolver-status.properties"
+            --exclude="**/lastUpdated"
+          
 
       # Step 4: Build and Test
       - name: Build with Maven
@@ -49,6 +54,10 @@ jobs:
         with:
           name: test-reports
           path: target/surefire-reports/
+
+      # step 7: Attempt to reduce loading time
+      - name: Cleanup Maven Repository
+        run: find ~/.m2/repository -name "*.lastUpdated" -type f -delete
 
   deploy:
     name: Deploy Application
