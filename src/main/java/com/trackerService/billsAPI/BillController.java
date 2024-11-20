@@ -42,4 +42,9 @@ public class BillController {
   public void deleteBill(@PathVariable Long id) {
     billService.deleteBill(id);
   }
+
+  @PostMapping("/batch-save")
+  public List<Bill> saveBills(@RequestBody List<Bill> bills) {
+    return billService.saveAllBills(bills);
+  }
 }
