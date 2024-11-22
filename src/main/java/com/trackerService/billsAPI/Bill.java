@@ -12,11 +12,12 @@ public class Bill {
   private Long id;
 
   private String name;
-  private Long dueDate; // Store as timestamp in milliseconds
+  private Long dueDate; // Store as timestamp in milliseconds todo: change this to be an int
   private Double amount;
   private String bankAccount;
   private String category;
   private boolean isPaid;
+
 
   // Getters and Setters
   public Long getId() {
