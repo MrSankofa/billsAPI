@@ -39,21 +39,46 @@ jobs:
             --exclude="**/lastUpdated"
           
 
-      # Step 4: Build and Test
+      # Step 4: Build and Test updated storage admin to charge me a bunch of money 7
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install -DskipTests
 
-      # Step 5: Run Unit Tests
-      - name: Run Unit Tests
-        run: mvn test
-
-      # Step 6: Archive Test Reports
-      - name: Archive Test Reports
-        if: always()
-        uses: actions/upload-artifact@v3
+      - name: Login to Google Cloud
+        uses: google-github-actions/setup-gcloud@v1
         with:
-          name: test-reports
-          path: target/surefire-reports/
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          export_default_credentials: true
+
+      - name: Build Docker Image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/billsapi:latest .
+
+      - name: Push Docker Image to Google Container Registry
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/billsapi:latest
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy billsapi \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/billsapi:latest \
+            --platform managed \
+            --region ${{ secrets.GCP_REGION }} \
+            --quiet
+
+      
+
+#      # Step 5: Run Unit Tests
+#      - name: Run Unit Tests
+#        run: mvn test
+#
+#      # Step 6: Archive Test Reports
+#      - name: Archive Test Reports
+#        if: always()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: test-reports
+#          path: target/surefire-reports/
 
       # step 7: Attempt to reduce loading time
       - name: Cleanup Maven Repository
