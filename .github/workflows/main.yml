@@ -64,7 +64,6 @@ jobs:
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/billsapi:latest \
             --platform managed \
             --region ${{ secrets.GCP_REGION }} \
-            --allow-unauthenticated \
             --quiet
 
       
