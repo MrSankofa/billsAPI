@@ -39,7 +39,7 @@ jobs:
             --exclude="**/lastUpdated"
           
 
-      # Step 4: Build and Test updated storage admin to charge me a bunch of money 3
+      # Step 4: Build and Test updated storage admin to charge me a bunch of money 4
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
